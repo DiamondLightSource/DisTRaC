@@ -70,9 +70,10 @@ fi
 
 ./create-mon.sh -i=$interface -f=$folder
 ./create-mgr.sh -f=$folder
-echo HOSTS:$mpiHosts
-module load openmpi/1.4.3
-mpirun -H $mpiHosts ./create-gram.sh -s=$size -n=$amount -f=$folder &
+echo HOSTS:
+cat $folder/hostfile
+module load openmpi
+mpirun --hostfile $folder/hostfile  ./create-gram.sh -s=$size -n=$amount -f=$folder &
 wait
 if ([ ! -z "$poolname" ] && [ "$rgw" = "false" ])
 then

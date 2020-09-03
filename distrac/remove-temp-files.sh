@@ -14,5 +14,6 @@ case $i in
 esac
 done
 rm $folder/ceph.*
+rm $folder/hostfile 
 rm $folder/*.num
 rmdir $folder

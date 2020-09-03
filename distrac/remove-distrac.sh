@@ -32,13 +32,13 @@ else
     source ./uge-hostfile.sh -f=$folder
 fi
 
-module load openmpi/1.4.3
+module load openmpi
 echo "Removing Ceph"
-mpirun -H $mpiHosts ./remove-ceph.sh
+mpirun --hostfile $folder/hostfile ./remove-ceph.sh
 echo "Removing OSDs"
-mpirun -H $mpiHosts ./remove-osd.sh
+mpirun --hostfile $folder/hostfile ./remove-osd.sh
 echo "Removing GRAM"
-mpirun -H $mpiHosts ./remove-gram.sh
+mpirun --hostfile $folder/hostfile ./remove-gram.sh
 echo "Removing Temp Files"
 ./remove-temp-files.sh -f=$folder
 echo "Done"

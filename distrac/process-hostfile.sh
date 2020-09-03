@@ -20,5 +20,5 @@ esac
 done
 # Read hostfile and put the amount of hosts in amountOfHosts.num
 echo `awk -F '[,]' ' {print NF}' $hostfile` > $folder/amountOfHosts.num
-# Assign a string of hosts with commas to mpiHosts
-mpiHosts=$(cat $hostfile)
+# Convert the hostfile to a column of hosts and store in $folder/hostlist
+tr , '\n' <  $hostfile >  $folder/hostfile

@@ -2,9 +2,9 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4013776.svg)](https://doi.org/10.5281/zenodo.4013776)
 
-| Version | 1.1.0                                         |
+| Version | 1.0                                           |
 |---------|-----------------------------------------------|
-| Date    | 2020-09-07                                    |
+| Date    | 2020-08-27                                    |
 | Authors | Gabryel Mason-Williams - Diamond Light Source |
 | Authors | Dave Bond - Diamond Light Source              |
 | Authors | Mark Basham - Rosalind Franklin Institute and  Diamond Light Source              |

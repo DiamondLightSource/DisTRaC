@@ -33,12 +33,13 @@ else
 fi
 
 module load openmpi
+amountOfHosts=`cat $folder/amountOfHosts.num`
 echo "Removing Ceph"
-mpirun --hostfile $folder/hostfile ./remove-ceph.sh
+mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile ./remove-ceph.sh
 echo "Removing OSDs"
-mpirun --hostfile $folder/hostfile ./remove-osd.sh
+mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile ./remove-osd.sh
 echo "Removing GRAM"
-mpirun --hostfile $folder/hostfile ./remove-gram.sh
+mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile ./remove-gram.sh
 echo "Removing Temp Files"
 ./remove-temp-files.sh -f=$folder
 echo "Done"

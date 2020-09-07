@@ -73,8 +73,8 @@ fi
 echo HOSTS:
 cat $folder/hostfile
 module load openmpi
-mpirun --hostfile $folder/hostfile  ./create-gram.sh -s=$size -n=$amount -f=$folder &
-wait
+amountOfHosts=`cat $folder/amountOfHosts.num`
+mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile  ./create-gram.sh -s=$size -n=$amount -f=$folder
 if ([ ! -z "$poolname" ] && [ "$rgw" = "false" ])
 then
    ./create-pool.sh -pn=$poolname -per=1 -f=$folder

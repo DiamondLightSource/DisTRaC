@@ -22,3 +22,7 @@ done
 echo `awk -F '[,]' ' {print NF}' $hostfile` > $folder/amountOfHosts.num
 # Convert the hostfile to a column of hosts and store in $folder/hostlist
 tr , '\n' <  $hostfile >  $folder/hostfile
+# Make sure the first host in hostfile is the headnode
+sed -i "/\b\("$HOSTNAME"\)\b/d" $folder/hostfile
+sed -i "1 i$HOSTNAME" $folder/hostfile
+

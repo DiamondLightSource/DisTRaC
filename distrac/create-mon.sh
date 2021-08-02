@@ -20,7 +20,7 @@ done
 
 fsid=$(uuidgen)
 # Gets ipaddr from the interface
-ipaddr=$(/usr/sbin/ip addr show $interface | grep -Po 'inet \K[\d.]+') 
+ipaddr=$(ip addr show $interface | grep -Po 'inet \K[\d.]+') 
 # Gets the ip and netmask from ip address
 ipnetmask=$(ip route | grep $ipaddr | awk '{print $1;}')
 

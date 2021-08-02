@@ -21,6 +21,10 @@ case $i in
     interface="${i#*=}"
     shift # past argument=value
     ;;
+    -t=*|--type=*)
+    type="${i#*=}"
+    shift
+	;;
     -s=*|--size=*)
     size="${i#*=}"
     shift # past argument=value
@@ -74,7 +78,7 @@ echo HOSTS:
 cat $folder/hostfile
 module load openmpi
 amountOfHosts=`cat $folder/amountOfHosts.num`
-mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile  ./create-gram.sh -s=$size -n=$amount -f=$folder
+mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile  ./create-osd.sh -s=$size -n=$amount -f=$folder -t=$type
 if ([ ! -z "$poolname" ] && [ "$rgw" = "false" ])
 then
    ./create-pool.sh -pn=$poolname -per=1 -f=$folder

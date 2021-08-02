@@ -36,6 +36,3 @@ do
 done
 sudo pvcreate /dev/gram[0-$((amount-1))] &
 wait
-# Create OSDs
-./create-gram-osd.sh -n=$amount -f=$folder &
-wait

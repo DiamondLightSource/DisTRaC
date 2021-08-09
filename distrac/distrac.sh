@@ -21,22 +21,26 @@ case $i in
     interface="${i#*=}"
     shift # past argument=value
     ;;
+    -t=*|--type=*)
+    type="${i#*=}"
+    shift
+    ;;
     -s=*|--size=*)
     size="${i#*=}"
     shift # past argument=value
     ;;
     -n=*|--number=*)
     amount="${i#*=}"
-	shift # past argument=value
+    shift # past argument=value
     ;;
-	 -pn=*|--poolname=*)
+    -pn=*|--poolname=*)
     poolname="${i#*=}"
     shift # past argument=value
     ;;
-	-rgw|--rgw)
-	rgw=true
-	shift
-	;;
+    -rgw|--rgw)
+    rgw=true
+    shift
+    ;;
     -uid=*|--uid=*)
     id="${i#*=}"
     shift # past argument=value
@@ -45,18 +49,18 @@ case $i in
     secret="${i#*=}"
     shift # past argument=value
     ;;
-	 -hf=*|--hostfile=*)
+    -hf=*|--hostfile=*)
     hostfile="${i#*=}"
     shift # past argument=value
     ;;
-	-h| --help)
-	helpmsg
-	exit 0 
-	shift
-	;;
+    -h| --help)
+    helpmsg
+    exit 0 
+    shift
+    ;;
     *) 
-	helpmsg
-	exit 0
+    helpmsg
+    exit 0
     ;;
 esac
 done
@@ -74,7 +78,7 @@ echo HOSTS:
 cat $folder/hostfile
 module load openmpi
 amountOfHosts=`cat $folder/amountOfHosts.num`
-mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile  ./create-gram.sh -s=$size -n=$amount -f=$folder
+mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile  ./create-osd.sh -s=$size -n=$amount -f=$folder -t=$type
 if ([ ! -z "$poolname" ] && [ "$rgw" = "false" ])
 then
    ./create-pool.sh -pn=$poolname -per=1 -f=$folder
@@ -82,7 +86,7 @@ fi
 
 module unload openmpi
 
-if ([ $rgw ] && [ -z "$poolname" ])
+if ([ "$rgw" = "true" ] && [ -z "$poolname" ])
 	 then
 	./create-rgw.sh -f=$folder
 	if ([ -z "$id" ] && [ -z "$secret" ])

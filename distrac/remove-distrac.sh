@@ -13,6 +13,10 @@ case $i in
     hostfile="${i#*=}"
     shift # past argument=value
     ;;
+    -t=*|--type=*)
+    type="${i#*=}"
+    shift
+	;;
 	-h| --help)
 	helpmsgremove
 	exit 0 
@@ -37,9 +41,7 @@ amountOfHosts=`cat $folder/amountOfHosts.num`
 echo "Removing Ceph"
 mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile ./remove-ceph.sh
 echo "Removing OSDs"
-mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile ./remove-osd.sh
-echo "Removing GRAM"
-mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile ./remove-gram.sh
+mpirun -np $amountOfHosts --map-by ppr:1:node --hostfile $folder/hostfile ./remove-osd.sh -t=$type
 echo "Removing Temp Files"
 ./remove-temp-files.sh -f=$folder
 echo "Done"

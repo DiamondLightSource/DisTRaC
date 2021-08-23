@@ -1,0 +1,94 @@
+# allow DisTRaC user to create a ceph cluster
+
+# Create the Monitor node
+distrac ALL=NOPASSWD: /usr/bin/cp */ceph.conf /etc/ceph/
+distrac ALL=NOPASSWD: /usr/bin/mkdir /var/lib/ceph/mon/ceph-*
+distrac ALL=NOPASSWD: /usr/bin/ceph-mon --cluster ceph --mkfs -i * --monmap */ceph.monmap --keyring */ceph.mon.keyring
+distrac ALL=NOPASSWD: /usr/bin/chown -R ceph\:ceph  /var/lib/ceph/mon/ceph-*
+distrac ALL=NOPASSWD: /usr/bin/cp */ceph.client.admin.keyring /etc/ceph/
+distrac ALL=NOPASSWD: /usr/bin/systemctl start ceph-mon@*
+
+# Create the MGR node
+distrac ALL=NOPASSWD: /usr/bin/mkdir /var/lib/ceph/mgr/ceph-*
+distrac ALL=NOPASSWD: /usr/bin/cp */ceph.mgr.keyring /var/lib/ceph/mgr/ceph-*/keyring
+distrac ALL=NOPASSWD: /usr/bin/chown -R ceph\:ceph  /var/lib/ceph/mgr/ceph-*
+distrac ALL=NOPASSWD: /usr/bin/systemctl start ceph-mgr@*
+
+# Create BRD Block Device
+distrac ALL=NOPASSWD: /usr/sbin/modprobe brd rd_size=* max_part=1 rd_nr=*
+distrac ALL=NOPASSWD: /usr/sbin/pvcreate /dev/ram*
+
+# Create ZRAM Block Device
+distrac ALL=NOPASSWD: /usr/bin/sed -i /\#\\\\s*types\\\\s*\=\\\\s*\\\\\[\\\\s*\\"fd\\"\,\\\\s*16\\\\s*\]/atypes=\\\\\[\\"zram\\"\,1000\] /etc/lvm/lvm.conf
+distrac ALL=NOPASSWD: /usr/sbin/modprobe zram num_devices=*
+distrac ALL=NOPASSWD: /usr/bin/echo *
+distrac ALL=NOPASSWD: /usr/bin/tee /sys/block/zram*/disksize
+distrac ALL=NOPASSWD: /usr/sbin/pvcreate /dev/zram*
+
+# Create GRAM Block Device 
+distrac ALL=NOPASSWD: /usr/bin/sed -i /\#\\\\s*types\\\\s*\=\\\\s*\\\\\[\\\\s*\\"fd\\"\,\\\\s*16\\\\s*\]/atypes=\\\\\[\\"gram\\"\,1000\] /etc/lvm/lvm.conf 
+distrac ALL=NOPASSWD: /usr/sbin/insmod /tmp/gram.ko num_devices=*
+distrac ALL=NOPASSWD: /usr/bin/echo *
+distrac ALL=NOPASSWD: /usr/bin/tee /sys/block/gram*/disksize
+distrac ALL=NOPASSWD: /usr/sbin/pvcreate /dev/gram*
+
+# Create OSD
+distrac ALL=NOPASSWD: /usr/bin/cp */ceph.client.admin.keyring /etc/ceph/
+distrac ALL=NOPASSWD: /usr/bin/cp */ceph.conf /etc/ceph/
+distrac ALL=NOPASSWD: /usr/bin/cp */ceph.bootstrap-osd.keyring  /var/lib/ceph/bootstrap-osd/ceph.keyring
+distrac ALL=NOPASSWD: /usr/sbin/ceph-volume lvm create --data /dev/ram*
+distrac ALL=NOPASSWD: /usr/sbin/ceph-volume lvm create --data /dev/zram*
+distrac ALL=NOPASSWD: /usr/sbin/ceph-volume lvm create --data /dev/gram*
+
+# Create RGW
+distrac ALL=NOPASSWD: /usr/bin/mkdir /var/lib/ceph/radosgw/ceph-radosgw.*
+distrac ALL=NOPASSWD: /usr/bin/cp */ceph.client.radosgw.keyring /var/lib/ceph/radosgw/ceph-radosgw.*/keyring
+distrac ALL=NOPASSWD: /usr/bin/chown -R ceph\:ceph /var/lib/ceph/radosgw/ceph-radosgw.*/keyring
+distrac ALL=NOPASSWD: /usr/bin/systemctl start ceph-radosgw@radosgw.*
+
+# Remove Ceph
+
+## Stopping services
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop ceph.target
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop ceph-mon.target
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop ceph-mgr.target
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop ceph-radosgw.target
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop ceph-osd.target
+
+## Cleaning folders
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/bootstrap-mgr/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/bootstrap-osd/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/bootstrap-rbd/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/bootstrap-rgw/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/mgr/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/mon/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/radosgw/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/osd/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/tmp/ -mindepth 1 -delete
+distrac ALL=NOPASSWD: /usr/bin/find /var/log/ceph/ -mindepth 1 -delete
+## Stopping extra deamons
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop system-ceph\\\\x2dmgr.slice 
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop system-ceph\\\\x2dmon.slice 
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop system-ceph\\\\x2dosd.slice 
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop system-ceph\\\\x2dradosgw.slice
+distrac ALL=NOPASSWD: /usr/bin/systemctl stop system-ceph\\\\x2dvolume.slice
+
+# Removing OSDs
+distrac ALL=NOPASSWD: /usr/sbin/vgdisplay 
+distrac ALL=NOPASSWD: /usr/sbin/vgremove ceph* -y
+distrac ALL=NOPASSWD: /usr/bin/umount /var/lib/ceph/osd/*
+distrac ALL=NOPASSWD: /usr/bin/systemctl reset-failed
+
+## Removing BRD block device
+distrac ALL=NOPASSWD: /usr/sbin/pvremove /dev/ram*
+distrac ALL=NOPASSWD: /usr/sbin/rmmod brd
+
+## Removing ZRAM block devices
+distrac ALL=NOPASSWD: /usr/sbin/pvremove /dev/zram*
+distrac ALL=NOPASSWD: /usr/sbin/rmmod zram
+distrac ALL=NOPASSWD: /usr/bin/sed -i /types=\\\\\[\\"zram\\"\,1000]/d /etc/lvm/lvm.conf
+
+## Removing GRAM block devices
+distrac ALL=NOPASSWD: /usr/sbin/pvremove /dev/gram*
+distrac ALL=NOPASSWD: /usr/sbin/rmmod gram
+distrac ALL=NOPASSWD: /usr/bin/sed -i /types=\\\\\[\\"gram\\"\,1000]/d /etc/lvm/lvm.conf

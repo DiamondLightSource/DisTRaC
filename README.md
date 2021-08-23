@@ -17,7 +17,7 @@ DisTRaC is a deployment tool that allows Ceph to run on a High-Performance Compu
 - OpenMPI 
 - A job scheduler if using UGE, then a parallel environment (PE) is also required, more details below.
 - Network File System
-- Sudo privileges  
+- Sudo privileges --- see sudoers_file for the sudoers file for a distrac as a user 
 - RHEL/CENTOS 
 - GRAM (The module this comes with is for the 3.10 kernel) The repo and source code is here https://github.com/DiamondLightSource/GRAM **
 

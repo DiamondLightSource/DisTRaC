@@ -25,11 +25,14 @@ esac
 done
 sudo modprobe zram num_devices=$amount &
 wait
+
 for num in $(seq 0 $[amount-1])
 do
-	sudo echo $size | sudo tee /sys/block/zram$num/disksize &
+	echo $size | sudo tee /sys/block/zram$num/disksize &
 	wait
 done
+# Changes LVM so pvcreate can be used
+./create-zram-lvm.sh
 sudo pvcreate /dev/zram[0-$((amount-1))] &
 wait
 

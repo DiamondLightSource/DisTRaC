@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # On each host this is run
-type=gram
 for i in "$@"
 do
 case $i in
@@ -16,7 +15,7 @@ done
 
 (sudo vgdisplay | grep -o "ceph.*" ) | while read -r remove; 
 do 
-    yes | sudo vgremove $remove &
+    sudo vgremove $remove -y &
 	wait 
 done
 wait
@@ -27,8 +26,7 @@ while read Line1 filelocation  rest;
 done  < <(cat /proc/mounts | grep "ceph/osd")
 
 sudo systemctl reset-failed 
-sudo rm -r /var/lib/ceph/osd/
-sudo mkdir /var/lib/ceph/osd/
+sudo find "/var/lib/ceph/osd/" -mindepth 1 -delete
 
 if [ $type == gram ] 
     then 

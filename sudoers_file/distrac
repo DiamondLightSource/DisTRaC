@@ -36,9 +36,9 @@ distrac ALL=NOPASSWD: /usr/sbin/pvcreate /dev/gram*
 distrac ALL=NOPASSWD: /usr/bin/cp */ceph.client.admin.keyring /etc/ceph/
 distrac ALL=NOPASSWD: /usr/bin/cp */ceph.conf /etc/ceph/
 distrac ALL=NOPASSWD: /usr/bin/cp */ceph.bootstrap-osd.keyring  /var/lib/ceph/bootstrap-osd/ceph.keyring
-distrac ALL=NOPASSWD: /usr/sbin/ceph-volume lvm create --data /dev/ram*
-distrac ALL=NOPASSWD: /usr/sbin/ceph-volume lvm create --data /dev/zram*
-distrac ALL=NOPASSWD: /usr/sbin/ceph-volume lvm create --data /dev/gram*
+distrac ALL=NOPASSWD: /usr/sbin/ceph-volume --log-path /dev/null lvm create --data /dev/ram*
+distrac ALL=NOPASSWD: /usr/sbin/ceph-volume --log-path /dev/null lvm create --data /dev/zram*
+distrac ALL=NOPASSWD: /usr/sbin/ceph-volume --log-path /dev/null lvm create --data /dev/gram*
 
 # Create RGW
 distrac ALL=NOPASSWD: /usr/bin/mkdir /var/lib/ceph/radosgw/ceph-radosgw.*

@@ -31,7 +31,7 @@ sudo insmod  /tmp/gram.ko num_devices=$amount &
 wait
 for num in $(seq 0 $[amount-1])
 do
-	sudo echo $size | sudo tee /sys/block/gram$num/disksize &
+	echo $size | sudo tee /sys/block/gram$num/disksize &
 	wait
 done
 sudo pvcreate /dev/gram[0-$((amount-1))] &

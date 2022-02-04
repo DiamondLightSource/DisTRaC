@@ -6,6 +6,7 @@ function helpmsg(){	echo "
  -i=  | --interface= Network interface to use, i.e. -i=ib0 or --interface=ib0 (Required)
  -s=  | --size=      Size of RAM to use, i.e. -s=50GB or --size=100GB (Required)
  -n=  | --number=    Number of RAM OSDs on each host, if -s=50GB and -n=5 that will create 5 OSDs using 250GB of RAM (Required)
+ -t=  | --type=      The type of RAM Block gram, ram (brd), zram i.e. -t=gram or -t=ram or --type=zram (Required) 
  -f=  | --folder=    Folder to locate Ceph keys this allows for multiple deployments when different folders speficed.
  -hf= | --hostfile=  When not using UGE with a parallel environment, provide a file with a list of comma separated hosts
  -pn= | --poolname=  Define the name of a pool if using RADOS, i.e. -pn=example or --poolname=example 
@@ -18,6 +19,7 @@ function helpmsg(){	echo "
 
 function helpmsgremove(){	echo "
  -f=  | --folder=    Folder with Ceph keys to remove
+ -t=  | --type=      The type of RAM Block gram, ram (brd), zram i.e. -t=gram or -t=ram or --type=zram (Required) 
  -hf= | --hostfile=  When not using UGE with a parallel environment, provide a file with a list of comma separated hosts for Ceph removal.
  -h   | --help 	     Display help message
 "

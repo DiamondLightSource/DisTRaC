@@ -23,16 +23,16 @@ case $i in
     ;;
 esac
 done
-# This ignores root squash
-cp gram.ko /tmp/
-# Changes LVM so pvcreate can be used
-./create-gram-lvm.sh
-sudo insmod  /tmp/gram.ko num_devices=$amount &
+sudo modprobe zram num_devices=$amount &
 wait
+
 for num in $(seq 0 $[amount-1])
 do
-	echo $size | sudo tee /sys/block/gram$num/disksize &
+	echo $size | sudo tee /sys/block/zram$num/disksize &
 	wait
 done
-sudo pvcreate /dev/gram[0-$((amount-1))] &
+# Changes LVM so pvcreate can be used
+./create-zram-lvm.sh
+sudo pvcreate /dev/zram[0-$((amount-1))] &
 wait
+

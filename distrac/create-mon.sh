@@ -20,10 +20,9 @@ done
 
 fsid=$(uuidgen)
 # Gets ipaddr from the interface
-ipaddr=$(/usr/sbin/ip addr show $interface | grep -Po 'inet \K[\d.]+') 
+ipaddr=$(ip addr show $interface | grep -Po 'inet \K[\d.]+') 
 # Gets the ip and netmask from ip address
-ipnetmask=$(ip route | grep $ipaddr | awk '{print $1;}')
-
+ipnetmask=$(ip route | grep $ipaddr | grep -v -e "default" | grep "/" |awk '{print $1;}')
 #This creates a ceph config,
 #that sets the default pool size to 1,
 
@@ -32,7 +31,8 @@ fsid = $fsid
 mon initial members = $HOSTNAME
 mon host = $ipaddr
 public network = $ipnetmask
-cluster netwokr = $ipnetmask
+cluster network = $ipnetmask
+ms bind msgr2 = true
 auth cluster required = cephx
 auth service required = cephx
 auth client required = cephx
@@ -41,6 +41,7 @@ mon pg warn min per osd = 30
 mon pg warn max per osd = 166496
 mon max pg per osd = 166496
 " > $folder/ceph.conf
+cat log.conf >> ceph.conf
 # Copy ceph.conf to system
 sudo cp $folder/ceph.conf /etc/ceph/
 # Create Keyrings
@@ -64,3 +65,4 @@ sudo chown -R ceph:ceph  /var/lib/ceph/mon/ceph-$HOSTNAME
 sudo cp $folder/ceph.client.admin.keyring /etc/ceph/
 # Starting Mon daemon
 sudo systemctl start ceph-mon@$HOSTNAME
+ceph mon enable-msgr2

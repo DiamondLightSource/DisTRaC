@@ -13,13 +13,15 @@
 DisTRaC is a deployment tool that allows Ceph to run on a High-Performance Computing cluster using RAM when a Network File System is present. It's designed to be used with a job scheduler such as Univa Grid Engine (UGE) to create a transient object store as and when required which lasts as long as the user intends.
 
 ## System Requirements:
-- Ceph version 12+ (Tested on Luminous and Nautilus) 
+- Ceph version 12+ (Tested on Luminous and Nautilus, Octopus) 
 - OpenMPI 
 - A job scheduler if using UGE, then a parallel environment (PE) is also required, more details below.
 - Network File System
-- Sudo privileges  
+- Sudo privileges --- see sudoers_file for the sudoers file for a distrac as a user 
 - RHEL/CENTOS 
-- GRAM (The module this comes with is for the 3.10 kernel) The repo and source code is here https://github.com/DiamondLightSource/GRAM
+- GRAM (The module this comes with is for the 3.10 kernel) The repo and source code is here https://github.com/DiamondLightSource/GRAM **
+
+** GRAM is the recommend kernel module to create RAM blocks however BRD and ZRAM are now supported.
 
 ### Running with UGE
 
@@ -50,6 +52,7 @@ DisTRaC takes several parameters to run:
  -i=  | --interface= Network interface to use, i.e. -i=ib0 or --interface=ib0 (Required)
  -s=  | --size=      Size of RAM to use, i.e. -s=50GB or --size=100GB (Required)
  -n=  | --number=    Number of RAM OSDs on each host, if -s=50GB and -n=5 that will create 5 OSDs using 250GB of RAM (Required)
+ -t=  | --type=      The type of RAM Block gram, ram (brd), zram i.e. -t=gram or -t=ram or --type=zram (Required) 
  -f=  | --folder=    Folder to locate Ceph keys this allows for multiple deployments when different folders speficed.
  -hf= | --hostfile=  When not using UGE with a parallel environment, provide a file with a list of comma separated hosts
  -pn= | --poolname=  Define the name of a pool if using RADOS, i.e. -pn=example or --poolname=example 
@@ -65,6 +68,7 @@ Removal only requires a folder and hostfile is they where specified when running
 ./remove-distrac.sh -h
 
  -f=  | --folder=    Folder with Ceph keys to remove
+ -t=  | --type=      The type of RAM Block gram, ram (brd), zram i.e. -t=gram or -t=ram or --type=zram (Required) 
  -hf= | --hostfile=  When not using UGE with a parallel environment, provide a file with a list of comma separated hosts for Ceph removal.
  -h   | --help       Display help message
 
@@ -72,13 +76,30 @@ Removal only requires a folder and hostfile is they where specified when running
 
 ### Basic Ceph instance
 
-To create a basic ceph instance using DisTRaC all that needs to be set is the network interface for communication, the size of the RAM OSD and the number of OSDs on each host. 
+To create a basic ceph instance using DisTRaC all that needs to be set is the network interface for communication, the size and type of the RAM OSD and the number of OSDs on each host. 
 
+####  ***Ceph with GRAM OSD***
 ```
- ./distrac.sh -i=ib0 -n=1 -s=80G
+ ./distrac.sh -i=ib0 -n=1 -s=80G -t=gram
 ```
 
-This will create a ceph instance with the public and cluster network communicating over the ib0 interface. Each host will have one OSD of size 80G. 
+This will create a ceph instance with the public and cluster network communicating over the ib0 interface. Each host will have one OSD of size 80G using the GRAM Ram block device. 
+
+####  ***Ceph with BRD OSD***
+```
+ ./distrac.sh -i=enp0s3 -n=1 -s=8G -t=ram
+```
+
+This will create a ceph instance with the public and cluster network communicating over the enp0s3 interface. Each host will have one OSD of size 8G using the BRD Ram block device. 
+
+####  ***Ceph with ZRAM OSD***
+```
+ ./distrac.sh -i=ens3 -n=1 -s=200G -t=zram
+```
+
+This will create a ceph instance with the public and cluster network communicating over the ens3 interface. Each host will have one OSD of size 200G using the ZRAM Ram block device. 
+
+**The rest of the examples are with GRAM for simplicity.**
 
 ### Ceph instance with a storage pool
 
@@ -86,7 +107,7 @@ To create a ceph instance with a storage pool, an additional parameter is needed
 
 
 ```
-./distrac.sh -i=ib0 -n=1 -s=80G pn=example
+./distrac.sh -i=ib0 -n=1 -s=80G -t=gram -pn=example
 ```
 This creates a pool called example with 512 pg groups. 
 
@@ -95,7 +116,7 @@ This creates a pool called example with 512 pg groups.
 To create a ceph instance with a rados gateway, three additional parameters need to be set the rgw flag, uid and secret key  `-rgw` `-uid` and `-sk` respectively. 
 
 ```
-./distrac.sh -i=ib0 -n=1 -s=80G -rgw -uid=example -sk=example
+./distrac.sh -i=ib0 -n=1 -s=80G -t=gram -rgw -uid=example -sk=example 
 ```
 
 This creates a ceph instance that has rados gateway and an s3 user with the id of example and a secret and access key of example.  
@@ -105,9 +126,9 @@ This creates a ceph instance that has rados gateway and an s3 user with the id o
 
 To create multiple instances of Ceph, then the folder flag needs to be set `-f` or `--folder`. DisTRaC by default stores the Ceph keys inside the DisTRaC folder. This means sending two or more deployments to the job schedular could potentially interact with each other keys. To get around this problem, specify a folder name this will be created inside the distrac folder allowing for multiple instances to run without interacting.
 
-`./distrac.sh -i=ib0 -n=1 -s=80G -pn=example -folder=run1`
+`./distrac.sh -i=ib0 -n=1 -s=80G -t=gram -pn=example -folder=run1`
 
-`./distrac.sh -i=ib0 -n=1 -s=80G -rgw -uid=example -sk=example -folder=run2`
+`./distrac.sh -i=ib0 -n=1 -s=80G -t=gram -rgw -uid=example -sk=example -folder=run2`
 
 ### Using another job scheduler
 By supplying a host file as a parameter, any job scheduler can be used as long a list hosts the job will run on can be extracted. A host file should have a list of hosts separated by commas i.e.
@@ -119,14 +140,14 @@ node1,node2,node3,node4
 
 Example using hostfile:
 
- `./distrac.sh -i=ib0 -s=100G -n=1 --hostfile=/home/user/hostfile` 
+ `./distrac.sh -i=ib0 -s=100G -n=1 -t=gram --hostfile=/home/user/hostfile` 
 
 How to generate the host file within the job scheduler is left to the user, distrac/uge-hostfile.sh demonstrates how it is generated when using UGE. 
 
 
 ### Removing Ceph
 
-To remove Ceph from the system run `./remove-distrac.sh`. If a folder or hostfile was used in the creation of ceph specify as required.  
+To remove Ceph from the system run `./remove-distrac.sh -t=gram` specifing the type of RAM block used, i.e GRAM. If a folder or hostfile was used in the creation of ceph specify as required.  
 
 ## Example of creating a Distributed Transient RAM Ceph
 
@@ -141,7 +162,7 @@ cd distrac
 # USER JOB
 ceph -s 
 # END OF USER JOB
-./remove-distrac.sh
+./remove-distrac.sh -t=gram
 cd ..
 echo "Done"
 ```

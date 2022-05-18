@@ -29,7 +29,7 @@ amountOfOSDs=`cat $folder/amountOfOSDs.num`
 
 # Gets current PGS in ceph
 currentPGs=$(ceph pg stat 2> /dev/null | awk '{print $1}')
-source ./calculate-pool-pg.sh
+source calculate-pool-pg.sh
 # Works out the PGs need for pool
 CalculatePoolPG $percentage $amountOfHosts $amountOfOSDs
 # Creates a pool with the name passed and amout of PGs

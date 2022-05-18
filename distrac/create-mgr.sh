@@ -5,7 +5,7 @@ do
 case $i in
     -f=*|--folder=*)
     folder="${i#*=}"
-    mkdir $folder
+    mkdir $folder 2> /dev/null
     shift # past argument=value
     ;;
     *)
@@ -27,4 +27,4 @@ sudo chown -R ceph:ceph  /var/lib/ceph/mgr/ceph-$HOSTNAME/
 # Stating MGR daemon
 sudo systemctl start ceph-mgr@$HOSTNAME
 # Starting Dashboard
-ceph mgr module enable dashboard 
+#ceph mgr module enable dashboard 

@@ -34,19 +34,18 @@ sudo cp $folder/ceph.bootstrap-osd.keyring  /var/lib/ceph/bootstrap-osd/ceph.key
 
 if [ $type == gram ] 
     then 
-    ./create-gram.sh -s=$size -n=$amount -f=$folder
+    create-gram.sh -s=$size -n=$amount -f=$folder
 elif [ $type == ram ]
     then
-    ./create-brd.sh -s=$size -n=$amount -f=$folder
+    create-brd.sh -s=$size -n=$amount -f=$folder
 elif [ $type == zram ]
     then
-    ./create-zram.sh -s=$size -n=$amount -f=$folder
+    create-zram.sh -s=$size -n=$amount -f=$folder
 fi
-
 
 # Creating OSDs using ceph-volume
 for num in $(seq 0 $[amount-1])
 do
-	sudo ceph-volume --log-path /dev/null lvm create --data /dev/$type$num &
+    sudo ceph-volume lvm create --data /dev/$type$num
 done
-wait
+

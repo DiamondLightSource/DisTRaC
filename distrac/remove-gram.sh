@@ -5,4 +5,4 @@ sudo pvremove /dev/gram[0-$((amount-1))] &
 wait
 sudo rmmod gram  
 rm /tmp/gram.ko
-./remove-gram-lvm.sh
+remove-gram-lvm.sh

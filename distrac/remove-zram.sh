@@ -8,4 +8,4 @@ sudo pvremove /dev/zram[0-$((amount-1))] &
 wait
 # Unload zram
 sudo rmmod zram  
-./remove-zram-lvm.sh
+remove-zram-lvm.sh

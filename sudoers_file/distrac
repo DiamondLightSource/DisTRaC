@@ -55,7 +55,7 @@
 
 # Create FS
 %distrac ALL=NOPASSWD: /usr/bin/mkdir *
-%distrac ALL=NOPASSWD: /usr/bin/mount -t ceph :/ * -o name=admin,secret=*
+%distrac ALL=NOPASSWD: /usr/bin/mount -t ceph \:/ * -o name=admin\,secret=*
 %distrac ALL=NOPASSWD: /usr/bin/chown -R *\:* *
 %distrac ALL=NOPASSWD: /usr/bin/chmod 770 *
 

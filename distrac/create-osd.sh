@@ -46,6 +46,6 @@ fi
 # Creating OSDs using ceph-volume
 for num in $(seq 0 $[amount-1])
 do
-    sudo ceph-volume lvm create --data /dev/$type$num
+    sudo ceph-volume --log-path /dev/null lvm create --data /dev/$type$num
 done
 

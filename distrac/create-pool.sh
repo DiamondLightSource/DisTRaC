@@ -48,9 +48,5 @@ resultPlus1=$(expr $result + 1)
 pgstat=$(ceph pg stat 2> /dev/null | grep -c "$result active+clean")
 while  [ $pgstat -le 0 ]
 do
-    echo "hi"
 	pgstat=$(ceph pg stat 2> /dev/null | grep -c "$result active+clean")
-    echo "bye"
-    pgstat=$(ceph pg stat 2> /dev/null | grep -c "$resultPlus1 active+clean")
-    echo "no"
 done

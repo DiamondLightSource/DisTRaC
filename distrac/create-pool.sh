@@ -42,11 +42,9 @@ ceph osd pool create $poolname $result
 echo "Creating PG's"
 # Update the expected PGs active and clean to current plus new
 result=$(expr $result + $currentPGs)
-resultMinus1=$(expr $result - 1)
-resultPlus1=$(expr $result + 1) 
 # Check if all pgs are active and clean
-pgstat=$(ceph pg stat 2> /dev/null | grep -c "$result active+clean")
+pgstat=$(ceph -s | grep -c "$result active+clean")
 while  [ $pgstat -le 0 ]
 do
-	pgstat=$(ceph pg stat 2> /dev/null | grep -c "$result active+clean")
+	pgstat=$(ceph -s | grep -c "$result active+clean")
 done

@@ -43,9 +43,8 @@ elif [ $type == zram ]
     create-zram.sh -s=$size -n=$amount -f=$folder
 fi
 
-# Creating OSDs using ceph-volume
 for num in $(seq 0 $[amount-1])
 do
-    sudo ceph-volume --log-path /dev/null lvm create --data /dev/$type$num
+    sudo ceph-volume --log-path /dev/null lvm prepare --data /dev/$type$num
 done
-
+sudo ceph-volume --log-path /dev/null lvm activate --all

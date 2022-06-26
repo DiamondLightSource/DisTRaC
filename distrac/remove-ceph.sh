@@ -24,6 +24,8 @@ sudo find "/var/lib/ceph/mds/" -mindepth 1 -delete
 sudo find "/var/lib/ceph/tmp/" -mindepth 1 -delete
 sudo find "/var/log/ceph/" -mindepth 1 -delete
 sudo find "/var/lib/ceph/crash/" -mindepth 1 -delete
+sudo find "/etc/ceph/" -mindepth 1 -delete
+
 # Stop deamons
 sudo systemctl stop system-ceph\\x2dmgr.slice 
 sudo systemctl stop system-ceph\\x2dmon.slice 

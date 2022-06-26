@@ -33,6 +33,5 @@ do
 done
 # Changes LVM so pvcreate can be used
 create-zram-lvm.sh
-sudo pvcreate /dev/zram[0-$((amount-1))] &
-wait
+
 

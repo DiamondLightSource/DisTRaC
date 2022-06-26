@@ -34,5 +34,4 @@ do
 	echo $size | sudo tee /sys/block/gram$num/disksize &
 	wait
 done
-sudo pvcreate /dev/gram[0-$((amount-1))] &
-wait
+

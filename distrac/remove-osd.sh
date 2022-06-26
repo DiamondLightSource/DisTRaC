@@ -30,11 +30,11 @@ sudo find "/var/lib/ceph/osd/" -mindepth 1 -delete
 
 if [ $type == gram ] 
     then 
-    ./remove-gram.sh
+    remove-gram.sh
 elif [ $type == ram ]
     then
-    ./remove-brd.sh 
+    remove-brd.sh 
 elif [ $type == zram ]
     then
-    ./remove-zram.sh
+    remove-zram.sh
 fi

@@ -15,7 +15,7 @@ case $i in
     ;;
     -f=*|--folder=*)
     folder="${i#*=}"
-    mkdir $folder
+    mkdir $folder 2> /dev/null
     shift # past argument=value
     ;;
     *)
@@ -26,7 +26,7 @@ done
 # This ignores root squash
 cp gram.ko /tmp/
 # Changes LVM so pvcreate can be used
-./create-gram-lvm.sh
+create-gram-lvm.sh
 sudo insmod  /tmp/gram.ko num_devices=$amount &
 wait
 for num in $(seq 0 $[amount-1])
@@ -34,5 +34,4 @@ do
 	echo $size | sudo tee /sys/block/gram$num/disksize &
 	wait
 done
-sudo pvcreate /dev/gram[0-$((amount-1))] &
-wait
+

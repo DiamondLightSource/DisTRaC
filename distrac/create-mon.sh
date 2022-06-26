@@ -40,8 +40,9 @@ osd pool default size = 1
 mon pg warn min per osd = 30
 mon pg warn max per osd = 166496
 mon max pg per osd = 166496
+osd pool default pg autoscale mode = off
 " > $folder/ceph.conf
-cat log.conf >> ceph.conf
+distrac-config-log.sh
 # Copy ceph.conf to system
 sudo cp $folder/ceph.conf /etc/ceph/
 # Create Keyrings

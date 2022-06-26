@@ -6,7 +6,7 @@ do
 case $i in
     -f=*|--folder=*)
     folder="${i#*=}"
-    mkdir $folder
+    mkdir $folder 2> /dev/null
     shift # past argument=value
     ;;
 	-hf=*|--hostfile=*)
@@ -21,7 +21,7 @@ done
 # Convert the hostfile to a column of hosts and store in $folder/hostlist
 tr , '\n' <  $hostfile >  $folder/hostfile
 # Make sure the first host in hostfile is the headnode
-sed -i "/\b\("$HOSTNAME"\)\b/d" $folder/hostfile
-echo  "$(printf "$HOSTNAME \n"; cat $folder/hostfile)" > $folder/hostfile
+sed -i "/\b\("`hostname`"\)\b/d" $folder/hostfile
+echo  "$(printf "`hostname` \n"; cat $folder/hostfile)" > $folder/hostfile
 # Read hostfile and put the amount of hosts in amountOfHosts.num
 cat $folder/hostfile | wc -l > $folder/amountOfHosts.num

@@ -31,22 +31,20 @@ done
 sudo cp $folder/ceph.client.admin.keyring /etc/ceph/
 sudo cp $folder/ceph.conf /etc/ceph/
 sudo cp $folder/ceph.bootstrap-osd.keyring  /var/lib/ceph/bootstrap-osd/ceph.keyring
-
+sudo cp $folder/ceph.bootstrap-osd.keyring  /etc/ceph/ceph.keyring
 if [ $type == gram ] 
     then 
-    ./create-gram.sh -s=$size -n=$amount -f=$folder
+    create-gram.sh -s=$size -n=$amount -f=$folder
 elif [ $type == ram ]
     then
-    ./create-brd.sh -s=$size -n=$amount -f=$folder
+    create-brd.sh -s=$size -n=$amount -f=$folder
 elif [ $type == zram ]
     then
-    ./create-zram.sh -s=$size -n=$amount -f=$folder
+    create-zram.sh -s=$size -n=$amount -f=$folder
 fi
 
-
-# Creating OSDs using ceph-volume
 for num in $(seq 0 $[amount-1])
 do
-	sudo ceph-volume --log-path /dev/null lvm create --data /dev/$type$num &
+    sudo ceph-volume --log-path /dev/null lvm prepare --data /dev/$type$num
 done
-wait
+sudo ceph-volume --log-path /dev/null lvm activate --all

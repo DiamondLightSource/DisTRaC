@@ -13,7 +13,7 @@ case $i in
     ;;
     -f=*|--folder=*)
     folder="${i#*=}"
-    mkdir $folder
+    mkdir $folder 2> /dev/null
     shift # past argument=value
     ;;
     *)
@@ -28,18 +28,23 @@ amountOfOSDs=`cat $folder/amountOfOSDs.num`
 
 
 # Gets current PGS in ceph
-currentPGs=$(ceph pg stat | awk '{print $1}')
-source ./calculate-pool-pg.sh
+currentPGs=$(ceph pg stat 2> /dev/null | awk '{print $1}')
+if [ "$currentPGs" -eq "0" ];
+then
+    currentPGs=1
+fi 
+
+source calculate-pool-pg.sh
 # Works out the PGs need for pool
 CalculatePoolPG $percentage $amountOfHosts $amountOfOSDs
 # Creates a pool with the name passed and amout of PGs
-ceph osd pool create $poolname $result &
-wait
+ceph osd pool create $poolname $result
+echo "Creating PG's"
 # Update the expected PGs active and clean to current plus new
 result=$(expr $result + $currentPGs)
 # Check if all pgs are active and clean
-pgstat=$(ceph pg stat | grep -c "$result active+clean")
+pgstat=$(ceph -s | grep -c "$result active+clean")
 while  [ $pgstat -le 0 ]
 do
-	pgstat=$(ceph pg stat | grep -c "$result active+clean")
+	pgstat=$(ceph -s | grep -c "$result active+clean")
 done

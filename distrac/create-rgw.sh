@@ -5,7 +5,7 @@ do
 case $i in
     -f=*|--folder=*)
     folder="${i#*=}"
-    mkdir $folder
+    mkdir $folder 2> /dev/null
     shift # past argument=value
     ;;
     *)
@@ -24,17 +24,17 @@ sudo cp $folder/ceph.client.radosgw.keyring /var/lib/ceph/radosgw/ceph-radosgw.$
 # Setting folder permission to ceph user
 sudo chown -R ceph:ceph /var/lib/ceph/radosgw/ceph-radosgw.$HOSTNAME/keyring
 # Creating RGW Pools
-./create-pool.sh -pn=.rgw.root -per=0.05 -f=$folder &
+create-pool.sh -pn=.rgw.root -per=0.05 -f=$folder &
 wait
-./create-pool.sh -pn=default.rgw.control -per=0.02 -f=$folder &
+create-pool.sh -pn=default.rgw.control -per=0.02 -f=$folder &
 wait
-./create-pool.sh -pn=default.rgw.meta -per=0.02 -f=$folder &
+create-pool.sh -pn=default.rgw.meta -per=0.02 -f=$folder &
 wait
-./create-pool.sh -pn=default.rgw.log  -per=0.02 -f=$folder &
+create-pool.sh -pn=default.rgw.log  -per=0.02 -f=$folder &
 wait
-./create-pool.sh -pn=default.rgw.buckets.index -per=0.05 -f=$folder &
+create-pool.sh -pn=default.rgw.buckets.index -per=0.05 -f=$folder &
 wait
-./create-pool.sh -pn=default.rgw.buckets.data -per=0.84 -f=$folder &
+create-pool.sh -pn=default.rgw.buckets.data -per=0.84 -f=$folder &
 wait
 # Start rados gateway
 sudo systemctl start ceph-radosgw@radosgw.$HOSTNAME

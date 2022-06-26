@@ -15,7 +15,7 @@ case $i in
     ;;
     -f=*|--folder=*)
     folder="${i#*=}"
-    mkdir $folder
+    mkdir $folder 2> /dev/null
     shift # past argument=value
     ;;
     *)
@@ -25,5 +25,4 @@ esac
 done
 # Load brd ram block module
 sudo modprobe brd rd_size=`echo $(( $(numfmt $size --from iec) / 1024 )) ` max_part=1 rd_nr=$amount
-sudo pvcreate /dev/ram[0-$((amount-1))] &
-wait
+

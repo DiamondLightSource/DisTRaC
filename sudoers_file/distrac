@@ -41,7 +41,8 @@
 # Create OSD
 %distrac ALL=NOPASSWD: /usr/bin/cp */ceph.client.admin.keyring /etc/ceph/
 %distrac ALL=NOPASSWD: /usr/bin/cp */ceph.conf /etc/ceph/
-%distrac ALL=NOPASSWD: /usr/bin/cp */ceph.bootstrap-osd.keyring  /var/lib/ceph/bootstrap-osd/ceph.keyring
+%distrac ALL=NOPASSWD: /usr/bin/cp */ceph.bootstrap-osd.keyring /etc/ceph/ceph.keyring
+%distrac ALL=NOPASSWD: /usr/bin/cp */ceph.bootstrap-osd.keyring /var/lib/ceph/bootstrap-osd/ceph.keyring
 %distrac ALL=NOPASSWD: /usr/sbin/ceph-volume --log-path /dev/null lvm prepare --data /dev/ram*
 %distrac ALL=NOPASSWD: /usr/sbin/ceph-volume --log-path /dev/null lvm prepare --data /dev/zram*
 %distrac ALL=NOPASSWD: /usr/sbin/ceph-volume --log-path /dev/null lvm prepare --data /dev/gram*
@@ -88,6 +89,7 @@
 %distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/tmp/ -mindepth 1 -delete
 %distrac ALL=NOPASSWD: /usr/bin/find /var/lib/ceph/crash/ -mindepth 1 -delete
 %distrac ALL=NOPASSWD: /usr/bin/find /var/log/ceph/ -mindepth 1 -delete
+%distrac ALL=NOPASSWD: /usr/bin/find /etc/ceph/ -mindepth 1 -delete
 ## Stopping extra deamons
 %distrac ALL=NOPASSWD: /usr/bin/systemctl stop system-ceph\\\\x2dmgr.slice 
 %distrac ALL=NOPASSWD: /usr/bin/systemctl stop system-ceph\\\\x2dmon.slice 

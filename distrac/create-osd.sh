@@ -31,7 +31,7 @@ done
 sudo cp $folder/ceph.client.admin.keyring /etc/ceph/
 sudo cp $folder/ceph.conf /etc/ceph/
 sudo cp $folder/ceph.bootstrap-osd.keyring  /var/lib/ceph/bootstrap-osd/ceph.keyring
-
+sudo cp $folder/ceph.bootstrap-osd.keyring  /etc/ceph/ceph.keyring
 if [ $type == gram ] 
     then 
     create-gram.sh -s=$size -n=$amount -f=$folder

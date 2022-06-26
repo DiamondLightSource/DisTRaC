@@ -22,21 +22,21 @@
 
 # Create BRD Block Device
 %distrac ALL=NOPASSWD: /usr/sbin/modprobe brd rd_size=* max_part=1 rd_nr=*
-%distrac ALL=NOPASSWD: /usr/sbin/pvcreate /dev/ram*
+
 
 # Create ZRAM Block Device
 %distrac ALL=NOPASSWD: /usr/bin/sed -i /\#\\\\s*types\\\\s*\=\\\\s*\\\\\[\\\\s*\\"fd\\"\,\\\\s*16\\\\s*\]/atypes=\\\\\[\\"zram\\"\,1000\] /etc/lvm/lvm.conf
 %distrac ALL=NOPASSWD: /usr/sbin/modprobe zram num_devices=*
 %distrac ALL=NOPASSWD: /usr/bin/echo *
 %distrac ALL=NOPASSWD: /usr/bin/tee /sys/block/zram*/disksize
-%distrac ALL=NOPASSWD: /usr/sbin/pvcreate /dev/zram*
+
 
 # Create GRAM Block Device 
 %distrac ALL=NOPASSWD: /usr/bin/sed -i /\#\\\\s*types\\\\s*\=\\\\s*\\\\\[\\\\s*\\"fd\\"\,\\\\s*16\\\\s*\]/atypes=\\\\\[\\"gram\\"\,1000\] /etc/lvm/lvm.conf 
 %distrac ALL=NOPASSWD: /usr/sbin/insmod /tmp/gram.ko num_devices=*
 %distrac ALL=NOPASSWD: /usr/bin/echo *
 %distrac ALL=NOPASSWD: /usr/bin/tee /sys/block/gram*/disksize
-%distrac ALL=NOPASSWD: /usr/sbin/pvcreate /dev/gram*
+
 
 # Create OSD
 %distrac ALL=NOPASSWD: /usr/bin/cp */ceph.client.admin.keyring /etc/ceph/
@@ -105,15 +105,12 @@
 %distrac ALL=NOPASSWD: /usr/bin/systemctl reset-failed
 
 ## Removing BRD block device
-%distrac ALL=NOPASSWD: /usr/sbin/pvremove /dev/ram*
 %distrac ALL=NOPASSWD: /usr/sbin/rmmod brd
 
 ## Removing ZRAM block devices
-%distrac ALL=NOPASSWD: /usr/sbin/pvremove /dev/zram*
 %distrac ALL=NOPASSWD: /usr/sbin/rmmod zram
 %distrac ALL=NOPASSWD: /usr/bin/sed -i /types=\\\\\[\\"zram\\"\,1000]/d /etc/lvm/lvm.conf
 
 ## Removing GRAM block devices
-%distrac ALL=NOPASSWD: /usr/sbin/pvremove /dev/gram*
 %distrac ALL=NOPASSWD: /usr/sbin/rmmod gram
 %distrac ALL=NOPASSWD: /usr/bin/sed -i /types=\\\\\[\\"gram\\"\,1000]/d /etc/lvm/lvm.conf
